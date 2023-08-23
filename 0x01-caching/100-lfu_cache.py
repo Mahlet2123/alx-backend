@@ -7,11 +7,15 @@ class LFUCache(BaseCaching):
     def __init__(self):
         """ initialize """
         super().__init__()
-        self.freq_counter = {}  # Keeps track of frequency counts
-        self.freq_items = {}    # Keeps track of items for each frequency
+        self.freq_counter = {}    # Keeps track of frequency counts
+        self.freq_items = {}      # Keeps track of items for each frequency
+        self.access_time = {}     # Keeps track of access time for each key
+        self.current_time = 0     # Tracks the current time
 
     def update_frequency(self, key):
-        """ update the frequency for a key """
+        """
+        Update the frequency of the given key and move it to the new frequency bucket.
+        """
         frequency = self.freq_counter[key]
         self.freq_items[frequency].remove(key)
 
@@ -27,15 +31,18 @@ class LFUCache(BaseCaching):
             self.freq_items[frequency].add(key)
 
     def put(self, key, item):
-        """ Add an item in the cache
+        """
+        Store a new item in the cache.
         """
         if key is None or item is None:
             return
 
+        # If the key already exists, update the value and frequency
         if key in self.cache_data:
             self.cache_data[key] = item
             self.update_frequency(key)
         else:
+            # Remove the least frequently used item if the cache is full
             if len(self.cache_data) >= self.MAX_ITEMS:
                 min_frequency = min(self.freq_items)
                 items_to_discard = self.freq_items[min_frequency]
@@ -51,6 +58,7 @@ class LFUCache(BaseCaching):
                 self.freq_counter.pop(discard_key)
                 print("DISCARD:", discard_key)
 
+            # Add the new item and update the frequency
             self.cache_data[key] = item
             self.freq_counter[key] = 1
             if 1 not in self.freq_items:
@@ -58,17 +66,31 @@ class LFUCache(BaseCaching):
             else:
                 self.freq_items[1].add(key)
 
+        # Update the access time for the key
+        if key in self.access_time:
+            self.access_time[key] = self.current_time
+        else:
+            self.access_time[key] = self.current_time
+            self.current_time += 1
+
     def get(self, key):
-        """ Get an item by key
+        """
+        Retrieve an item from the cache based on the given key.
         """
         if key is None or key not in self.cache_data:
             return None
 
+        # Update the frequency and access time for the key
         self.update_frequency(key)
+        self.access_time[key] = self.current_time
+        self.current_time += 1
+
         return self.cache_data[key]
 
     def lru(self, items):
-        """ lru method """
+        """
+        Find the least recently used key among a set of keys.
+        """
         lru_key = None
         min_access_time = float('inf')
         for item in items:
