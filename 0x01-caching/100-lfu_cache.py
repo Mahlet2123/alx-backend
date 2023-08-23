@@ -16,7 +16,8 @@ class LFUCache(BaseCaching):
 
     def update_frequency(self, key):
         """
-        Update the frequency of the given key and move it to the new frequency bucket.
+        Update the frequency of the given key and move
+        it to the new frequency bucket.
         """
         frequency = self.freq_counter[key]
         self.freq_items[frequency].remove(key)
