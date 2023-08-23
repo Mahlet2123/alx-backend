@@ -18,15 +18,14 @@ class LIFOCache(BaseCaching):
         assign to the dictionary self.cache_data the
         item value for the key key.
         """
-        if key is None and item is None:
-            return
         if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
-            first_key = self.queqe.pop()
-            del self.cache_data[first_key]
-            print("DISCARD: {}".format(first_key))
+            last_key = self.queqe.pop()
+            del self.cache_data[last_key]
+            print("DISCARD: {}".format(last_key))
 
-        self.cache_data[key] = item
-        self.queqe.append(key)
+        if key and item:
+            self.cache_data[key] = item
+            self.queqe.append(key)
 
     def get(self, key):
         """
