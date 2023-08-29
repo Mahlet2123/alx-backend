@@ -21,7 +21,7 @@ app.config.from_object(Config)
 babel = Babel(app)
 
 
-@app.route("/", strict_slashes = False)
+@app.route("/", strict_slashes=False)
 def index() -> str:
     """ '/' route """
     return render_template("1-index.html")
@@ -30,4 +30,5 @@ def index() -> str:
 if __name__ == "__main__":
     app.run(host="0.0.0.0",
             port="5000",
-            debug=True)
+            debug=True
+            )
