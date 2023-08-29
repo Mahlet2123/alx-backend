@@ -8,6 +8,9 @@ app = Flask(__name__)
 
 
 class Config:
+    """
+    Represents a Flask Babel configuration.
+    """
     LANGUAGES = ["en", "fr"]
     BABLE_DEFAULT_LOCALE = "en"
     BABLE_DEFAULT_TIMEZONE = "UTC"
@@ -24,7 +27,7 @@ def get_locale():
     return request.accept_languages.best_match(app.config["LANGUAGES"])
 
 
-@app.route("/")
+@app.route("/", strict_slashes=False)
 def index():
     """ '/' route """
     return render_template("2-index.html")
@@ -33,5 +36,4 @@ def index():
 if __name__ == "__main__":
     app.run(host="0.0.0.0",
             port="5000",
-            threaded=True,
             debug=True)
