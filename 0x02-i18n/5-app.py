@@ -62,6 +62,7 @@ def before_request():
     user = get_user()
     g.user = user
 
+
 @app.route("/")
 def index():
     """ '/' route """
